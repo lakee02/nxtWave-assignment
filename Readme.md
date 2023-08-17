@@ -30,6 +30,9 @@ def calculate_type_count(test_cases):
     return type_count
 
 def calculate_type_score(total_score, type_count):
+    min_total_score = type_count["Non-hidden"] + (type_count["Edge case"] + type_count["Normal"] + type_count["Trivial"]) * 2
+    if total_score < min_total_score:
+        raise ValueError(f"The total score ({total_score}) is not sufficient to distribute among the test cases. The minimum required total score is {min_total_score}.")
     edge_case_score = (total_score - type_count["Non-hidden"]) // (type_count["Edge case"] + type_count["Normal"] + type_count["Trivial"])
     normal_score = edge_case_score
     trivial_score = edge_case_score
@@ -40,7 +43,6 @@ def calculate_type_score(total_score, type_count):
         "Trivial": trivial_score,
         "Non-hidden": non_hidden_score
     }
-
 def update_test_case_scores(total_score, test_cases):
     type_count = calculate_type_count(test_cases)
     type_score = calculate_type_score(total_score, type_count)
